@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DialougeGraph.h"
 #include "Toolkits/AssetEditorToolkit.h"
 #include "DialougeNodePlugin/Public/Dialouge.h"
 
@@ -22,8 +23,14 @@ public:
 	FString GetWorldCentricTabPrefix() const override { return "Dialouge Distribution "; }
 	FLinearColor GetWorldCentricTabColorScale() const override { return {}; }
 
-
+	//Saves the graph data
+	void UpdateDialougeAssetFromGraph();
+	//Loads the graph data
+	void UpdateGraphFromDialougeAsset();
+	
+	virtual void SaveAsset_Execute() override;
 protected:
 
 	UDialouge* Dialouge = nullptr;
+	UEdGraph* DialougeGraph = nullptr;
 };

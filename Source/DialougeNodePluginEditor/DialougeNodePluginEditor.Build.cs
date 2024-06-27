@@ -39,7 +39,10 @@ public class DialougeNodePluginEditor : ModuleRules
 				"Slate",
 				"SlateCore",
 				"DialougeNodePlugin",
-				"UnrealEd"
+				"UnrealEd",
+				"ToolMenus",
+				"Projects"
+				,"GraphEditor"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

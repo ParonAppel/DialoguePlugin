@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DialougeGraphRuntime.h"
 #include "UObject/NoExportTypes.h"
 #include "Dialouge.generated.h"
 
@@ -33,4 +34,7 @@ public:
 
 	UPROPERTY(EditAnywhere, meta=(RowType="CastMember"))
 	TObjectPtr<UDataTable> CastDataTable;
+
+	UPROPERTY()
+	UDialougeRuntimeGraph* Graph = nullptr;
 };
