@@ -9,6 +9,21 @@
 /**
  * 
  */
+USTRUCT(Blueprintable)
+struct FCastMember  : public FTableRowBase
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Name = INVTEXT("");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FColor Color = FColor::White;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UTexture2D> Portrait = nullptr;
+};
+
 UCLASS()
 class DIALOUGENODEPLUGIN_API UDialouge : public UObject
 {
@@ -16,6 +31,6 @@ class DIALOUGENODEPLUGIN_API UDialouge : public UObject
 
 public:
 
-	UPROPERTY(EditAnywhere)
-	float Number;
+	UPROPERTY(EditAnywhere, meta=(RowType="CastMember"))
+	TObjectPtr<UDataTable> CastDataTable;
 };
