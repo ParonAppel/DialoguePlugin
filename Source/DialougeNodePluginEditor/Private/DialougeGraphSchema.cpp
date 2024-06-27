@@ -50,7 +50,7 @@ UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* 
 	result->CreateCustomPin(EGPD_Output, TEXT("Output1"));
 	result->CreateCustomPin(EGPD_Output, TEXT("Output2"));
 
-	if(!FromPin)
+	if(FromPin)
 	{
 		result->GetSchema()->TryCreateConnection(FromPin, inputPin);
 	}
