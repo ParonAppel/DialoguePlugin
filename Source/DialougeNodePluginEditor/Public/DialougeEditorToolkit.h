@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DialougeGraph.h"
+#include "Graph/DialougeGraph.h"
 #include "Toolkits/AssetEditorToolkit.h"
 #include "DialougeNodePlugin/Public/Dialouge.h"
 
+class SDialougeGraphEditor;
 /**
  * 
  */
@@ -23,6 +24,7 @@ public:
 	FString GetWorldCentricTabPrefix() const override { return "Dialouge Distribution "; }
 	FLinearColor GetWorldCentricTabColorScale() const override { return {}; }
 
+
 	//Saves the graph data
 	void UpdateDialougeAssetFromGraph();
 	//Loads the graph data
@@ -32,5 +34,9 @@ public:
 protected:
 
 	UDialouge* Dialouge = nullptr;
-	UEdGraph* DialougeGraph = nullptr;
+	TObjectPtr<UDialougeGraph> DialougeGraph = nullptr;
+	TSharedPtr<SDialougeGraphEditor> GraphEditor;
+	TSharedPtr<IDetailsView> DetailsView;
+	
+
 };

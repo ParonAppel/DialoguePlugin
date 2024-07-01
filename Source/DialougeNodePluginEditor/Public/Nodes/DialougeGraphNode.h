@@ -6,6 +6,7 @@
 #include "EdGraph/EdGraphNode.h"
 #include "DialougeGraphNode.generated.h"
 
+class UDialougeNodeSaveData;
 /**
  * 
  */
@@ -19,6 +20,11 @@ public:
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual bool CanUserDeleteNode() const override { return true; }
 	virtual void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
+	virtual void SetSaveData(UDialougeNodeSaveData* InData);
 
 	UEdGraphPin* CreateCustomPin(EEdGraphPinDirection Direction, FName Name);
+
+	UPROPERTY()
+	UDialougeNodeSaveData* Data = nullptr;
 };
+

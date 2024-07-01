@@ -1,9 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DialougeGraphSchema.h"
+#include "Graph/DialougeGraphSchema.h"
 
-#include "DialougeGraphNode.h"
+#include "Nodes/DialougeGraphNode.h"
+#include "Nodes/SimpleDialougeGraphNode.h"
+
 
 void UDialougeGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
@@ -12,8 +14,8 @@ void UDialougeGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 	TSharedPtr<FNewNodeAction> NewNodeAction (
 		new FNewNodeAction(
 			INVTEXT("Nodes"),
-			INVTEXT("New Node"),
-			INVTEXT("Makes A New Node"),
+			INVTEXT("New Simple Dialouge Node"),
+			INVTEXT("Makes A New Simple Dialouge Node"),
 			0
 			)
 		);
@@ -40,15 +42,15 @@ const FPinConnectionResponse UDialougeGraphSchema::CanCreateConnection(const UEd
 UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location,
                                             bool bSelectNewNode)
 {
-	UDialougeGraphNode* result = NewObject<UDialougeGraphNode>(ParentGraph);
+	USimpleDialougeGraphNode* result = NewObject<USimpleDialougeGraphNode>(ParentGraph);
 	result->CreateNewGuid();
 	result->NodePosX = Location.X;
 	result->NodePosY = Location.Y;
-
-
-	UEdGraphPin* inputPin = result->CreateCustomPin(EGPD_Input, TEXT("Input"));
-	result->CreateCustomPin(EGPD_Output, TEXT("Output1"));
-	result->CreateCustomPin(EGPD_Output, TEXT("Output2"));
+	
+	result->SetSaveData(nullptr);
+	
+	UEdGraphPin* inputPin = result->CreateCustomPin(EGPD_Input, TEXT(""));
+	result->CreateCustomPin(EGPD_Output, TEXT(""));
 
 	if(FromPin)
 	{

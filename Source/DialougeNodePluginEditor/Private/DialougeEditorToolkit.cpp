@@ -3,8 +3,9 @@
 
 #include "DialougeEditorToolkit.h"
 
-#include "DialougeGraphNode.h"
-#include "DialougeGraphSchema.h"
+#include "Graph/DialougeGraphEditor.h"
+#include "Nodes/DialougeGraphNode.h"
+#include "Graph/DialougeGraphSchema.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Modules/ModuleManager.h"
@@ -14,8 +15,10 @@ void FDialougeEditorToolkit::InitEditor(const TArray<UObject*>& InObjects)
 {
 	Dialouge = Cast<UDialouge>(InObjects[0]);
 
-	DialougeGraph = FBlueprintEditorUtils::CreateNewGraph(Dialouge,"DialougeGraph", UDialougeGraph::StaticClass(), UDialougeGraphSchema::StaticClass());
+	DialougeGraph = Cast<UDialougeGraph>(FBlueprintEditorUtils::CreateNewGraph(Dialouge,"DialougeGraph", UDialougeGraph::StaticClass(), UDialougeGraphSchema::StaticClass()));
 
+	DialougeGraph->DialougeAsset = Dialouge;
+	
 	const TSharedRef<FTabManager::FLayout> Layout = FTabManager::NewLayout("DialougeEditorLayout")
 	->AddArea
 	(
@@ -52,13 +55,13 @@ void FDialougeEditorToolkit::RegisterTabSpawners(const TSharedRef<FTabManager>& 
 	FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	FDetailsViewArgs DetailsViewArgs;
 	DetailsViewArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
-	TSharedRef<IDetailsView> DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
+	DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
 	DetailsView->SetObjects(TArray<UObject*>{ Dialouge });
-	InTabManager->RegisterTabSpawner("DialougeDetailsTab", FOnSpawnTab::CreateLambda([=](const FSpawnTabArgs&)
+	InTabManager->RegisterTabSpawner("DialougeDetailsTab", FOnSpawnTab::CreateLambda([this](const FSpawnTabArgs&)
 	{
 		return SNew(SDockTab)
 		[
-			DetailsView
+			DetailsView.ToSharedRef()
 		];
 	}))
 	.SetDisplayName(INVTEXT("Details"))
@@ -68,15 +71,15 @@ void FDialougeEditorToolkit::RegisterTabSpawners(const TSharedRef<FTabManager>& 
 	{
 		return SNew(SDockTab)
 			[
-				SNew(SGraphEditor)
-					.IsEditable(true)
-					.GraphToEdit(DialougeGraph)
+				SAssignNew(GraphEditor, SDialougeGraphEditor, DialougeGraph)
+					.DetailsView(DetailsView)
 			];
 	}))
 	.SetDisplayName(INVTEXT("Graph"))
 	.SetGroup(WorkspaceMenuCategory.ToSharedRef());
 
 	UpdateGraphFromDialougeAsset();
+	
 }
 
 void FDialougeEditorToolkit::UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabManager)
@@ -100,8 +103,13 @@ void FDialougeEditorToolkit::UpdateDialougeAssetFromGraph()
 	//Save Nodes
 	for(UEdGraphNode* uiNode : DialougeGraph->Nodes)
 	{
+		
 		UDialougeRuntimeNode* runtimeNode = NewObject<UDialougeRuntimeNode>(runtimeGraph);
 		runtimeNode->Position = FVector2D(uiNode->NodePosX, uiNode->NodePosY);
+		runtimeNode->NodeClass = uiNode->GetClass();
+		
+		if(UDialougeGraphNode* dialougeUINode = Cast<UDialougeGraphNode>(uiNode))
+			runtimeNode->NodeSaveData = dialougeUINode->Data;
 
 		for (UEdGraphPin* pin : uiNode->Pins)
 		{
@@ -154,10 +162,12 @@ void FDialougeEditorToolkit::UpdateGraphFromDialougeAsset()
 	//Remake nodes
 	for(UDialougeRuntimeNode* runtimeNode : Dialouge->Graph->Nodes )
 	{
-		UDialougeGraphNode* newUINode = NewObject<UDialougeGraphNode>(DialougeGraph);
+		UDialougeGraphNode* newUINode = NewObject<UDialougeGraphNode>(DialougeGraph.Get(), runtimeNode->NodeClass);
 		newUINode->CreateNewGuid();
 		newUINode->NodePosX = runtimeNode->Position.X;
 		newUINode->NodePosY = runtimeNode->Position.Y;
+		
+		newUINode->SetSaveData(runtimeNode->NodeSaveData);
 
 		if(runtimeNode->InputPin != nullptr)
 		{
@@ -199,12 +209,11 @@ void FDialougeEditorToolkit::UpdateGraphFromDialougeAsset()
 	}
 }
 
-
-
 void FDialougeEditorToolkit::SaveAsset_Execute()
 {
 	UpdateDialougeAssetFromGraph();
 	FAssetEditorToolkit::SaveAsset_Execute();
 }
+
 
 

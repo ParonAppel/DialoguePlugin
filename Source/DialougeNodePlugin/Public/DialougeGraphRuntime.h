@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DialougeNodeSaveData.h"
 #include "UObject/Object.h"
 #include "DialougeGraphRuntime.generated.h"
 
@@ -44,6 +45,12 @@ public:
 
 	UPROPERTY()
 	FVector2D Position;
+
+	UPROPERTY()
+	TSubclassOf<UEdGraphNode> NodeClass;
+
+	UPROPERTY()
+	UDialougeNodeSaveData* NodeSaveData;
 };
 
 UCLASS()
@@ -54,6 +61,7 @@ public:
 	
 	UPROPERTY()
 	TArray<UDialougeRuntimeNode*> Nodes;
-
-
+	
 };
+
+

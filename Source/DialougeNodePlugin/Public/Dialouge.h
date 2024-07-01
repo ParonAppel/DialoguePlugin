@@ -32,9 +32,6 @@ class DIALOUGENODEPLUGIN_API UDialouge : public UObject
 
 public:
 
-	UPROPERTY(EditAnywhere, meta=(RowType="CastMember"))
-	TObjectPtr<UDataTable> CastDataTable;
-
 	UPROPERTY()
 	UDialougeRuntimeGraph* Graph = nullptr;
 };
