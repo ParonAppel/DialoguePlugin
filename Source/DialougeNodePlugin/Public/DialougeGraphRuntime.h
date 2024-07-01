@@ -23,6 +23,9 @@ public:
 
 	UPROPERTY()
 	UDialougeRuntimePin* Connection = nullptr;
+
+	UPROPERTY()
+	UDialougeRuntimeNode* Owner = nullptr;
 };
 
 UCLASS()

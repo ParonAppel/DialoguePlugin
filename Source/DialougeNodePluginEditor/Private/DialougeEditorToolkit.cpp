@@ -124,7 +124,8 @@ void FDialougeEditorToolkit::UpdateDialougeAssetFromGraph()
 			UDialougeRuntimePin* runtimePin = NewObject<UDialougeRuntimePin>(runtimeNode);
 			runtimePin->PinName = pin->PinName;
 			runtimePin->PinID = pin->PinId;
-
+			runtimePin->Owner = runtimeNode;
+			
 			if(pin->HasAnyConnections() && pin->Direction == EGPD_Output)
 			{
 				std::pair<FGuid, FGuid> connection = std::make_pair(pin->PinId, pin->LinkedTo[0]->PinId);
