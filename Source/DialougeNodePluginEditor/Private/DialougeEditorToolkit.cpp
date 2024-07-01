@@ -9,6 +9,7 @@
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Modules/ModuleManager.h"
+#include "Nodes/StartDialougeGraphNode.h"
 
 
 void FDialougeEditorToolkit::InitEditor(const TArray<UObject*>& InObjects)
@@ -16,7 +17,7 @@ void FDialougeEditorToolkit::InitEditor(const TArray<UObject*>& InObjects)
 	Dialouge = Cast<UDialouge>(InObjects[0]);
 
 	DialougeGraph = Cast<UDialougeGraph>(FBlueprintEditorUtils::CreateNewGraph(Dialouge,"DialougeGraph", UDialougeGraph::StaticClass(), UDialougeGraphSchema::StaticClass()));
-
+	DialougeGraph->bAllowDeletion = false;
 	DialougeGraph->DialougeAsset = Dialouge;
 	
 	const TSharedRef<FTabManager::FLayout> Layout = FTabManager::NewLayout("DialougeEditorLayout")
@@ -78,6 +79,10 @@ void FDialougeEditorToolkit::RegisterTabSpawners(const TSharedRef<FTabManager>& 
 	.SetDisplayName(INVTEXT("Graph"))
 	.SetGroup(WorkspaceMenuCategory.ToSharedRef());
 
+	if(!Dialouge->Graph || !Dialouge->Graph->StartNode)
+	{
+		DialougeGraph->GetSchema()->CreateDefaultNodesForGraph(*DialougeGraph);
+	}
 	UpdateGraphFromDialougeAsset();
 	
 }
@@ -110,6 +115,9 @@ void FDialougeEditorToolkit::UpdateDialougeAssetFromGraph()
 		
 		if(UDialougeGraphNode* dialougeUINode = Cast<UDialougeGraphNode>(uiNode))
 			runtimeNode->NodeSaveData = dialougeUINode->Data;
+
+		if(uiNode->GetClass() == UStartDialougeGraphNode::StaticClass())
+			Dialouge->Graph->StartNode = runtimeNode;
 
 		for (UEdGraphPin* pin : uiNode->Pins)
 		{

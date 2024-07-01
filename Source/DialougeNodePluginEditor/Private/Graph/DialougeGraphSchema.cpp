@@ -5,6 +5,7 @@
 
 #include "Nodes/DialougeGraphNode.h"
 #include "Nodes/SimpleDialougeGraphNode.h"
+#include "Nodes/StartDialougeGraphNode.h"
 
 
 void UDialougeGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
@@ -37,6 +38,28 @@ const FPinConnectionResponse UDialougeGraphSchema::CanCreateConnection(const UEd
 	}
 	
 	return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_AB, TEXT(""));
+}
+
+void UDialougeGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
+{
+	CreateStartNode(Graph);
+	Super::CreateDefaultNodesForGraph(Graph);
+}
+
+void UDialougeGraphSchema::CreateStartNode(UEdGraph& Graph) const
+{
+	UStartDialougeGraphNode* result = NewObject<UStartDialougeGraphNode>(&Graph);
+	result->CreateNewGuid();
+	result->NodePosX = 0;
+	result->NodePosY = 0;
+	
+	result->SetSaveData(nullptr);
+	
+	result->CreateCustomPin(EGPD_Output, TEXT(""));
+	
+	
+	Graph.Modify();
+	Graph.AddNode(result, true, true);
 }
 
 UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location,

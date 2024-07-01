@@ -18,8 +18,16 @@ public:
 	
 	virtual void GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const override;
 	virtual const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const override;
+
+	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
+
+protected:
+
+	void CreateStartNode(UEdGraph& Graph) const;
 };
 
+
+// ----------------- Actions ------------------
 USTRUCT()
 struct FNewNodeAction : public FEdGraphSchemaAction
 {
