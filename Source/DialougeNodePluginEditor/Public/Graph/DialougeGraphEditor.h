@@ -19,8 +19,11 @@ public:
 	SLATE_END_ARGS()
 	
 	void Construct(const FArguments& InArgs, const TObjectPtr<UDialougeGraph> InEditor);
-
-	static bool CanEdit();
+	
+	bool CanEdit();
+	bool CanDelete();
+	bool CanCopyNodes();
+	bool CanPasteNodes();
 
 	FOnSelectionChanged OnSelectionChangedEvent;
 
@@ -28,7 +31,10 @@ protected:
 
 	void BindGraphCommands();
 	virtual void OnSelectedNodesChanged(const TSet<UObject*>& Nodes);
-	static void UndoGraphAction();
+	void UndoGraphAction();
+	void DeleteSelectedNodes();
+	void CopySelectedNodes();
+	void PasteNodes();
 	
 	TSharedPtr<FUICommandList> CommandList = nullptr;
 	TSharedPtr<IDetailsView> DetailsView = nullptr;

@@ -61,7 +61,9 @@ public:
 	
 	UPROPERTY()
 	TArray<UDialougeRuntimeNode*> Nodes;
-	
+
+	UPROPERTY()
+	UDialougeRuntimeNode* StartNode = nullptr;
 };
 
 

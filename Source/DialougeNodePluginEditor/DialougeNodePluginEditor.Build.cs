@@ -41,8 +41,9 @@ public class DialougeNodePluginEditor : ModuleRules
 				"DialougeNodePlugin",
 				"UnrealEd",
 				"ToolMenus",
-				"Projects"
-				,"GraphEditor"
+				"Projects" ,
+				"GraphEditor",
+				"ApplicationCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
