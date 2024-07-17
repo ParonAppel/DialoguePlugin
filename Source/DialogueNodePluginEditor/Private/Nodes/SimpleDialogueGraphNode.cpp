@@ -64,7 +64,7 @@ void SSimpleDialogueGraphNode::Construct(const FArguments& InArgs, USimpleDialog
 	GraphNode = InNode;
 
 	SimpleDialogueGraphNode = InNode;
-
+	
 	SetCursor(EMouseCursor::CardinalCross);
 	UpdateGraphNode();
 	
@@ -85,6 +85,7 @@ TSharedRef<SWidget> SSimpleDialogueGraphNode::CreateNodeContentArea()
 				SAssignNew(LeftNodeBox, SVerticalBox)
 			]
 			+SHorizontalBox::Slot()
+			.Padding(0,7,0,7)
 			.AutoWidth()
 			.HAlign(HAlign_Fill)
 			[
@@ -107,6 +108,10 @@ void SSimpleDialogueGraphNode::UpdateGraphNode()
 	{
 		USimpleDialogueSaveData* data = Cast<USimpleDialogueSaveData>(SimpleDialogueGraphNode->Data);
 		DialogueTextBlock->SetText(data->DialogueText);
+		DialogueTextBlock->SetWrapTextAt(300);
+		DialogueTextBlock->SetAutoWrapText(true);
+		DialogueTextBlock->SetWrappingPolicy(ETextWrappingPolicy::DefaultWrapping);
+		
 	}
 }
 
