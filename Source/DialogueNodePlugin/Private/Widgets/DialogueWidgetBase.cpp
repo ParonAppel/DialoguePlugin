@@ -5,5 +5,12 @@
 
 void UDialogueWidgetBase::CallOnNextDialogue()
 {
-	OnNextDialogue.Broadcast();
+	OnNextDialogue.Broadcast(0);
 }
+
+void UDialogueWidgetBase::SendOptionsAnswer(int OptionChosen)
+{
+	OnNextDialogue.Broadcast(OptionChosen);
+}
+
+

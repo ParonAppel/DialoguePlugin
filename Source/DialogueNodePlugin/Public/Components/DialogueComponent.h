@@ -34,7 +34,7 @@ public:
 	TSubclassOf<UDialogueWidgetBase> DialogueWidgetClass;
 
 	UFUNCTION()
-	void OnNextDialogue();
+	void OnNextDialogue(int Pin);
 
 protected:
 

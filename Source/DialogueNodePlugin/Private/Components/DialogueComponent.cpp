@@ -3,6 +3,7 @@
 
 #include "Components/DialogueComponent.h"
 
+#include "SaveData/PlayerOptionsSaveData.h"
 #include "SaveData/SimpleDialogueSaveData.h"
 
 
@@ -17,25 +18,36 @@ UDialogueComponent::UDialogueComponent()
 }
 
 
-void UDialogueComponent::OnNextDialogue()
+void UDialogueComponent::OnNextDialogue(int Pin)
 {
-	if(!CurrentNode  || !CurrentNode->OutputPins[0]->Connection)
+	if(!CurrentNode  || !CurrentNode->OutputPins[Pin]->Connection)
 	{
 		QuitDialogue();
 		return;
 	}
-	if(!CurrentNode->OutputPins[0]->Connection->Owner)
+	if(!CurrentNode->OutputPins[Pin]->Connection->Owner)
 	{
 		QuitDialogue();
 		return;
 	}
 
-	CurrentNode = CurrentNode->OutputPins[0]->Connection->Owner;
+	CurrentNode = CurrentNode->OutputPins[Pin]->Connection->Owner;
 	
 	if(CurrentNode->NodeSaveData->GetClass() == USimpleDialogueSaveData::StaticClass())
 	{
 		USimpleDialogueSaveData* saveData = Cast<USimpleDialogueSaveData>(CurrentNode->NodeSaveData);
 		DialogueWidget->OnNewDialogue(saveData->CastMember, saveData->DialogueText);
+	}
+	else if(CurrentNode->NodeSaveData->GetClass() == UPlayerOptionsSaveData::StaticClass())
+	{
+		UPlayerOptionsSaveData* saveData = Cast<UPlayerOptionsSaveData>(CurrentNode->NodeSaveData);
+		TMap<int, FPlayerOptions> optionsToSend;
+		for (int i = 0; i <  saveData->PlayerOptions.Num(); i++)
+		{
+			// TODO: Implement logic to rule out options
+			optionsToSend.Add(i,saveData->PlayerOptions[i]);
+		}
+		DialogueWidget->OnNewOptions(optionsToSend);
 	}
 	
 	
@@ -62,10 +74,10 @@ void UDialogueComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UDialogueComponent::StartDialogue()
 {
-	if(DialogueWidget)
+	if(DialogueWidget || !Dialogue || !DialogueWidgetClass)
 		return;
 	
-	CurrentNode = Dialogue->Graph->StartNode->OutputPins[0]->Connection->Owner;
+	CurrentNode = Dialogue->Graph->StartNode;
 
 	if(!CurrentNode)
 	{
@@ -74,21 +86,13 @@ void UDialogueComponent::StartDialogue()
 		
 		return;
 	}
-		
-	if(!DialogueWidgetClass)
-		return;
 	
 	DialogueWidget = Cast<UDialogueWidgetBase>(CreateWidget(GetWorld(), DialogueWidgetClass));
 	DialogueWidget->AddToViewport(0);
 
 	DialogueWidget->OnNextDialogue.AddUniqueDynamic(this, &UDialogueComponent::OnNextDialogue);
 
-	if(CurrentNode->NodeSaveData->GetClass() == USimpleDialogueSaveData::StaticClass())
-	{
-		USimpleDialogueSaveData* saveData = Cast<USimpleDialogueSaveData>(CurrentNode->NodeSaveData);
-		DialogueWidget->OnNewDialogue(saveData->CastMember, saveData->DialogueText);
-	}
-	
+	OnNextDialogue(0);
 }
 
 void UDialogueComponent::QuitDialogue()

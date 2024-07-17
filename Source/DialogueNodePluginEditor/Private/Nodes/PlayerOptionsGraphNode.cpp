@@ -26,7 +26,7 @@ void UPlayerOptionsGraphNode::SetSaveData(UDialogueNodeSaveData* InData)
 	Super::SetSaveData(InData);
 
 	Data->OnPropertyChanged.AddUObject(this, &UPlayerOptionsGraphNode::OnPropertiesChanged);
-	OnPropertiesChanged();
+	// OnPropertiesChanged();
 }
 
 TSharedPtr<SGraphNode> UPlayerOptionsGraphNode::CreateVisualWidget()
