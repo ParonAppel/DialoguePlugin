@@ -47,13 +47,13 @@ void USimpleDialogueGraphNode::SetSaveData(UDialogueNodeSaveData* InData)
 
 TSharedPtr<SGraphNode> USimpleDialogueGraphNode::CreateVisualWidget()
 {
-	return SAssignNew(GraphNode, SSimpleDialogueGraphNode, this);
+	return SAssignNew(GraphNodeWidget, SSimpleDialogueGraphNode, this);
 }
 
 void USimpleDialogueGraphNode::OnPropertiesChanged()
 {
-	if(GraphNode.IsValid())
-		GraphNode->UpdateGraphNode();
+	if(GraphNodeWidget.IsValid())
+		GraphNodeWidget->UpdateGraphNode();
 }
 
 

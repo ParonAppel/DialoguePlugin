@@ -32,7 +32,7 @@ private:
 	UFUNCTION()
 	void OnPropertiesChanged();
 	
-	TSharedPtr<SGraphNode> GraphNode = nullptr;
+	TSharedPtr<SGraphNode> GraphNodeWidget = nullptr;
 	
 };
 

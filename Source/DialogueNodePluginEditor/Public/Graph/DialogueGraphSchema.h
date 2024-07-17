@@ -29,14 +29,28 @@ protected:
 
 // ----------------- Actions ------------------
 USTRUCT()
-struct FNewNodeAction : public FEdGraphSchemaAction
+struct FNewSimpleDialogueNodeAction : public FEdGraphSchemaAction
 {
 	GENERATED_BODY()
 
 public:
 
-	FNewNodeAction() {}
-	FNewNodeAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip, const int32 InGrouping)
+	FNewSimpleDialogueNodeAction() {}
+	FNewSimpleDialogueNodeAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip, const int32 InGrouping)
+		: FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping) {}
+
+	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;
+};
+
+USTRUCT()
+struct FNewPlayerOptionsNodeAction : public FEdGraphSchemaAction
+{
+	GENERATED_BODY()
+
+public:
+
+	FNewPlayerOptionsNodeAction() {}
+	FNewPlayerOptionsNodeAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip, const int32 InGrouping)
 		: FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping) {}
 
 	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;
