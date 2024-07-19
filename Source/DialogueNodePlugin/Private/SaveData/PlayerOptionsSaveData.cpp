@@ -2,3 +2,8 @@
 
 
 #include "SaveData/PlayerOptionsSaveData.h"
+
+bool UPlayerOptionModifier::CheckIfOptionIsAvailable_Implementation()
+{
+	return false;
+}

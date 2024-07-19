@@ -17,6 +17,9 @@ struct FPlayerOptions
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText OptionsText = INVTEXT("Option");
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Instanced)
+	TObjectPtr<UPlayerOptionModifier> Modifier;
 	
 };
 UCLASS()
@@ -27,4 +30,14 @@ class DIALOGUENODEPLUGIN_API UPlayerOptionsSaveData : public UDialogueNodeSaveDa
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FPlayerOptions> PlayerOptions;
+};
+
+UCLASS(Blueprintable, Abstract, EditInlineNew, DefaultConfig)
+class DIALOGUENODEPLUGIN_API UPlayerOptionModifier : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintNativeEvent)
+	bool CheckIfOptionIsAvailable();
 };

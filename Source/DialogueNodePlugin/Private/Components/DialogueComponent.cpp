@@ -44,7 +44,11 @@ void UDialogueComponent::OnNextDialogue(int Pin)
 		TMap<int, FPlayerOptions> optionsToSend;
 		for (int i = 0; i <  saveData->PlayerOptions.Num(); i++)
 		{
-			// TODO: Implement logic to rule out options
+			if(saveData->PlayerOptions[i].Modifier)
+			{
+				if(!saveData->PlayerOptions[i].Modifier->CheckIfOptionIsAvailable())
+					continue;
+			}
 			optionsToSend.Add(i,saveData->PlayerOptions[i]);
 		}
 		DialogueWidget->OnNewOptions(optionsToSend);
