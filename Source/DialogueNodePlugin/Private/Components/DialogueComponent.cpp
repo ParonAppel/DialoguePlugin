@@ -3,18 +3,18 @@
 
 #include "Components/DialogueComponent.h"
 
+#include "Components/GameplayTagComponent.h"
+#include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "SaveData/PlayerOptionsSaveData.h"
 #include "SaveData/SimpleDialogueSaveData.h"
+#include "SaveData/TagBranchSaveData.h"
 
 
 // Sets default values for this component's properties
 UDialogueComponent::UDialogueComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
 }
 
 
@@ -38,42 +38,63 @@ void UDialogueComponent::OnNextDialogue(int Pin)
 		USimpleDialogueSaveData* saveData = Cast<USimpleDialogueSaveData>(CurrentNode->NodeSaveData);
 		DialogueWidget->OnNewDialogue(saveData->CastMember, saveData->DialogueText);
 	}
+	
 	else if(CurrentNode->NodeSaveData->GetClass() == UPlayerOptionsSaveData::StaticClass())
 	{
-		UPlayerOptionsSaveData* saveData = Cast<UPlayerOptionsSaveData>(CurrentNode->NodeSaveData);
-		TMap<int, FPlayerOptions> optionsToSend;
-		for (int i = 0; i <  saveData->PlayerOptions.Num(); i++)
-		{
-			if(saveData->PlayerOptions[i].Modifier)
-			{
-				if(!saveData->PlayerOptions[i].Modifier->CheckIfOptionIsAvailable())
-					continue;
-			}
-			optionsToSend.Add(i,saveData->PlayerOptions[i]);
-		}
-		DialogueWidget->OnNewOptions(optionsToSend);
+		HandlePlayerOptions();
 	}
 	
-	
+	else if(CurrentNode->NodeSaveData->GetClass() == UTagBranchSaveData::StaticClass())
+	{
+		HandleTagBranch();
+	}
 }
 
-// Called when the game starts
-void UDialogueComponent::BeginPlay()
+void UDialogueComponent::HandlePlayerOptions()
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	UPlayerOptionsSaveData* saveData = Cast<UPlayerOptionsSaveData>(CurrentNode->NodeSaveData);
+	TMap<int, FPlayerOptions> optionsToSend;
+	for (int i = 0; i <  saveData->PlayerOptions.Num(); i++)
+	{
+		if(saveData->PlayerOptions[i].Modifier)
+		{
+			if(!saveData->PlayerOptions[i].Modifier->CheckIfOptionIsAvailable())
+				continue;
+		}
+		optionsToSend.Add(i,saveData->PlayerOptions[i]);
+	}
+	DialogueWidget->OnNewOptions(optionsToSend);
 }
 
-
-// Called every frame
-void UDialogueComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                       FActorComponentTickFunction* ThisTickFunction)
+void UDialogueComponent::HandleTagBranch()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	UTagBranchSaveData* saveData = Cast<UTagBranchSaveData>(CurrentNode->NodeSaveData);
+	ACharacter* playerCharacter =  UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
 
-	// ...
+	UGameplayTagComponent* tagComponent = Cast<UGameplayTagComponent>(playerCharacter->GetComponentByClass(UGameplayTagComponent::StaticClass()));
+
+	if(!tagComponent)
+	{
+		OnNextDialogue(1);
+		return;
+	}
+
+	// If player doesn't have all the necessary tags
+	if(!tagComponent->Tags.HasAll(saveData->NecessaryTags))
+	{
+		OnNextDialogue(1);
+		return;
+	}
+	
+	// If player has an excluded tag
+	if(tagComponent->Tags.HasAny(saveData->ExcludedTags))
+	{
+		OnNextDialogue(1);
+		return;
+	}
+
+	//Success
+	OnNextDialogue(0);
 }
 
 void UDialogueComponent::StartDialogue()

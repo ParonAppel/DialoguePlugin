@@ -26,7 +26,8 @@ public class DialogueNodePlugin : ModuleRules
 			new string[]
 			{
 				"Core",
-				"UMG"
+				"UMG",
+				"GameplayTags"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -38,7 +39,7 @@ public class DialogueNodePlugin : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

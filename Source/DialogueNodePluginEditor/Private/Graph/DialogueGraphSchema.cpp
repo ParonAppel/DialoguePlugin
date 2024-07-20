@@ -3,6 +3,7 @@
 
 #include "Graph/DialogueGraphSchema.h"
 
+#include "FlowNodes/DialogueFlowTagBranchNode.h"
 #include "Nodes/DialogueGraphNode.h"
 #include "Nodes/PlayerOptionsGraphNode.h"
 #include "Nodes/SimpleDialogueGraphNode.h"
@@ -16,7 +17,7 @@ void UDialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 	TSharedPtr<FNewSimpleDialogueNodeAction> NewSimpleDialogueNodeAction (
 		new FNewSimpleDialogueNodeAction(
 			INVTEXT("Nodes"),
-			INVTEXT("New Simple Dialogue Node"),
+			INVTEXT("New Simple Dialogue"),
 			INVTEXT("Makes A New Simple Dialogue Node"),
 			0
 			)
@@ -27,13 +28,24 @@ void UDialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 	TSharedPtr<FNewPlayerOptionsNodeAction> NewPlayerOptionsNodeAction (
 		new FNewPlayerOptionsNodeAction(
 			INVTEXT("Nodes"),
-			INVTEXT("New Player Option Node"),
+			INVTEXT("New Player Option"),
 			INVTEXT("Makes A New Player Option Node"),
 			0
 			)
 		);
 
 	ContextMenuBuilder.AddAction(NewPlayerOptionsNodeAction);
+
+	TSharedPtr<FNewTagBranchNodeAction> NewTagBranchNodeAction (
+		new FNewTagBranchNodeAction(
+			INVTEXT("Flow"),
+			INVTEXT("New Gamplay Tag Branch"),
+			INVTEXT("A Node For Branching Based On The Players Gameplay Tags"),
+			0
+			)
+		);
+
+	ContextMenuBuilder.AddAction(NewTagBranchNodeAction);
 }
 
 const FPinConnectionResponse UDialogueGraphSchema::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const
@@ -48,8 +60,16 @@ const FPinConnectionResponse UDialogueGraphSchema::CanCreateConnection(const UEd
 	{	
 		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("inputs need to go to outputs"));
 	}
+	if (A->Direction == EGPD_Output)
+	{
+		return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_A, TEXT(""));
+	}
+	if (A->Direction == EGPD_Input)
+	{
+		return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_B, TEXT(""));
+	}
 	
-	return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_AB, TEXT(""));
+	return FPinConnectionResponse(CONNECT_RESPONSE_MAKE, TEXT(""));
 }
 
 void UDialogueGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
@@ -108,6 +128,30 @@ UEdGraphNode* FNewPlayerOptionsNodeAction::PerformAction(UEdGraph* ParentGraph, 
 	result->SetSaveData(nullptr);
 	
 	UEdGraphPin* inputPin = result->CreateCustomPin(EGPD_Input, TEXT(""));
+
+	if(FromPin)
+	{
+		result->GetSchema()->TryCreateConnection(FromPin, inputPin);
+	}
+	
+	ParentGraph->Modify();
+	ParentGraph->AddNode(result, true, true);
+	return result;
+}
+
+UEdGraphNode* FNewTagBranchNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin,
+	const FVector2D Location, bool bSelectNewNode)
+{
+	UDialogueFlowTagBranchNode* result = NewObject<UDialogueFlowTagBranchNode>(ParentGraph);
+	result->CreateNewGuid();
+	result->NodePosX = Location.X;
+	result->NodePosY = Location.Y;
+	
+	result->SetSaveData(nullptr);
+	
+	UEdGraphPin* inputPin = result->CreateCustomPin(EGPD_Input, TEXT(""));
+	result->CreateCustomPin(EGPD_Output, TEXT("Success"));
+	result->CreateCustomPin(EGPD_Output, TEXT("Fail"));
 
 	if(FromPin)
 	{

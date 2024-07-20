@@ -25,7 +25,7 @@ public class DialogueNodePluginEditor : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "AssetTools", "DialogueNodePlugin",
+				"Core", "AssetTools", "DialogueNodePlugin", "GameplayTagsEditor", "GameplayTags"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

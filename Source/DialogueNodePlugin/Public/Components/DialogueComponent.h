@@ -17,10 +17,6 @@ class DIALOGUENODEPLUGIN_API UDialogueComponent : public UActorComponent
 public:
 	UDialogueComponent();
 	
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-							   FActorComponentTickFunction* ThisTickFunction) override;
-
 	UFUNCTION(BlueprintCallable)
 	void StartDialogue();
 
@@ -41,11 +37,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	UDialogueWidgetBase* DialogueWidget;
 	
-	virtual void BeginPlay() override;
-
 	UPROPERTY()
 	UDialogueRuntimeNode* CurrentNode = nullptr;
 
-public:
+private:
+
+	void HandlePlayerOptions();
+	void HandleTagBranch();
 	
 };
