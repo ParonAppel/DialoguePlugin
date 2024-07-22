@@ -95,12 +95,16 @@ TSharedRef<SWidget> SSimpleDialogueGraphNode::CreateNodeContentArea()
 			.AutoWidth()
 			.HAlign(HAlign_Fill)
 			[
-				SAssignNew(DialogueTextBlock, SMultiLineEditableTextBox)
-				.IsReadOnly(false)
-				.OnTextCommitted(this, &SSimpleDialogueGraphNode::OnTextCommitted)
-				.WrapTextAt(400)
-				.AutoWrapText(true)
-				.WrappingPolicy(ETextWrappingPolicy::DefaultWrapping)
+				SNew(SBox)
+				.MaxDesiredWidth(300)
+				[
+					SAssignNew(DialogueTextBlock, SMultiLineEditableTextBox)
+					.IsReadOnly(false)
+					.OnTextCommitted(this, &SSimpleDialogueGraphNode::OnTextCommitted)
+					.WrapTextAt(300)
+					.AutoWrapText(true)
+					.WrappingPolicy(ETextWrappingPolicy::DefaultWrapping)
+				]
 			]
 			+SHorizontalBox::Slot()
 			.AutoWidth()
