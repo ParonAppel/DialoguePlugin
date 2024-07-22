@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "DialogueGraphNode.h"
 #include "SGraphNode.h"
-#include "SaveData/SimpleDialogueSaveData.h"
 #include "SimpleDialogueGraphNode.generated.h"
 
 /**
  * 
  */
+class SMultiLineEditableTextBox;
+
 UCLASS()
 class DIALOGUENODEPLUGINEDITOR_API USimpleDialogueGraphNode : public UDialogueGraphNode
 {
@@ -49,8 +50,10 @@ public:
 
 	virtual void UpdateGraphNode() override;
 
+	void OnTextCommitted( const FText& NewText, ETextCommit::Type CommitType);
+
 protected:
 	USimpleDialogueGraphNode* SimpleDialogueGraphNode = nullptr;
 	
-	TSharedPtr<STextBlock> DialogueTextBlock = nullptr;
+	TSharedPtr<SMultiLineEditableTextBox> DialogueTextBlock = nullptr;
 };

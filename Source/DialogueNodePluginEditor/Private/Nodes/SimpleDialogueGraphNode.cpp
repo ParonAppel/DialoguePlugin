@@ -2,8 +2,9 @@
 
 
 #include "Nodes/SimpleDialogueGraphNode.h"
-
+#include "SaveData/SimpleDialogueSaveData.h"
 #include "Graph/DialogueGraph.h"
+#include "Widgets/Input/SMultiLineEditableTextBox.h"
 
 
 FText USimpleDialogueGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -94,7 +95,12 @@ TSharedRef<SWidget> SSimpleDialogueGraphNode::CreateNodeContentArea()
 			.AutoWidth()
 			.HAlign(HAlign_Fill)
 			[
-				SAssignNew(DialogueTextBlock, STextBlock)
+				SAssignNew(DialogueTextBlock, SMultiLineEditableTextBox)
+				.IsReadOnly(false)
+				.OnTextCommitted(this, &SSimpleDialogueGraphNode::OnTextCommitted)
+				.WrapTextAt(400)
+				.AutoWrapText(true)
+				.WrappingPolicy(ETextWrappingPolicy::DefaultWrapping)
 			]
 			+SHorizontalBox::Slot()
 			.AutoWidth()
@@ -113,10 +119,12 @@ void SSimpleDialogueGraphNode::UpdateGraphNode()
 	{
 		USimpleDialogueSaveData* data = Cast<USimpleDialogueSaveData>(SimpleDialogueGraphNode->Data);
 		DialogueTextBlock->SetText(data->DialogueText);
-		DialogueTextBlock->SetWrapTextAt(300);
-		DialogueTextBlock->SetAutoWrapText(true);
-		DialogueTextBlock->SetWrappingPolicy(ETextWrappingPolicy::DefaultWrapping);
-		
 	}
+}
+
+void SSimpleDialogueGraphNode::OnTextCommitted(const FText& NewText, ETextCommit::Type CommitType)
+{
+	USimpleDialogueSaveData* data = Cast<USimpleDialogueSaveData>(SimpleDialogueGraphNode->Data);
+	data->DialogueText = NewText;
 }
 
