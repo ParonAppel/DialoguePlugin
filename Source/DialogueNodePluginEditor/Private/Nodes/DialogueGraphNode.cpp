@@ -87,6 +87,11 @@ void UDialogueGraphNode::SetSaveData(UDialogueNodeSaveData* InData)
 	Data = InData;
 }
 
+FSlateIcon UDialogueGraphNode::GetIconAndTint(FLinearColor& OutColor) const
+{
+	return Super::GetIconAndTint(OutColor);
+}
+
 UEdGraphPin* UDialogueGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, FName Name)
 {
 	FName category = (Direction == EGPD_Input) ? TEXT("Inputs") : TEXT("Outputs");

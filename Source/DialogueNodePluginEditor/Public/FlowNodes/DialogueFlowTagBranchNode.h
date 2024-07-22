@@ -21,7 +21,8 @@ public:
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual bool CanUserDeleteNode() const override { return true; }
-
+	virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
+	virtual bool ShowPaletteIconOnNode() const override { return true; }
 	virtual void SetSaveData(UDialogueNodeSaveData* InData) override;
 
 	virtual TSharedPtr<SGraphNode> CreateVisualWidget() override;

@@ -21,6 +21,7 @@ public:
 	virtual bool CanUserDeleteNode() const override { return true; }
 	virtual void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
 	virtual void SetSaveData(UDialogueNodeSaveData* InData);
+	virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
 
 	UEdGraphPin* CreateCustomPin(EEdGraphPinDirection Direction, FName Name);
 

@@ -22,7 +22,8 @@ public:
 	virtual FLinearColor GetNodeTitleColor() const override;
 	virtual bool CanUserDeleteNode() const override { return true; }
 	virtual void GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const override;
-
+	virtual FSlateIcon GetIconAndTint(FLinearColor& OutColor) const override;
+	virtual bool ShowPaletteIconOnNode() const override { return true; }
 	virtual void SetSaveData(UDialogueNodeSaveData* InData) override;
 
 	virtual TSharedPtr<SGraphNode> CreateVisualWidget() override;

@@ -17,6 +17,11 @@ FLinearColor UDialogueFlowTagBranchNode::GetNodeTitleColor() const
 	return FColor::White;
 }
 
+FSlateIcon UDialogueFlowTagBranchNode::GetIconAndTint(FLinearColor& OutColor) const
+{
+	return FSlateIcon( "EditorStyle", "GraphEditor.Branch_16x" );
+}
+
 void UDialogueFlowTagBranchNode::SetSaveData(UDialogueNodeSaveData* InData)
 {
 	if(!InData)

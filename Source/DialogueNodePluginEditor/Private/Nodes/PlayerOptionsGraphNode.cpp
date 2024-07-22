@@ -34,6 +34,11 @@ TSharedPtr<SGraphNode> UPlayerOptionsGraphNode::CreateVisualWidget()
 	return GraphNodeWidget;
 }
 
+FSlateIcon UPlayerOptionsGraphNode::GetIconAndTint(FLinearColor& OutColor) const
+{
+	return FSlateIcon( "EditorStyle", "MainFrame.VisitSearchForAnswersPage" );
+}
+
 void UPlayerOptionsGraphNode::OnPropertiesChanged()
 {
 	if(!Data)

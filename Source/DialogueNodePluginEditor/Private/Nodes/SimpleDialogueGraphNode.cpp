@@ -31,6 +31,11 @@ void USimpleDialogueGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraph
 	Super::GetNodeContextMenuActions(Menu, Context);
 }
 
+FSlateIcon USimpleDialogueGraphNode::GetIconAndTint(FLinearColor& OutColor) const
+{
+	return FSlateIcon(TEXT("EditorStyle"), TEXT("MainFrame.VisitForums"));
+}
+
 void USimpleDialogueGraphNode::SetSaveData(UDialogueNodeSaveData* InData)
 {
 	if(!InData)
