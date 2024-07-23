@@ -147,7 +147,8 @@ void SDialogueGraphEditor::OnSelectedNodesChanged(const TSet<UObject*>& Nodes)
 void SDialogueGraphEditor::UndoGraphAction()
 {
 	GEditor->UndoTransaction();
-	GetCurrentGraph()->Modify();
+	DialogueGraph->Modify();
+	DialogueGraph->NotifyGraphChanged();
 }
 
 void SDialogueGraphEditor::DeleteSelectedNodes()
@@ -173,15 +174,109 @@ void SDialogueGraphEditor::CopySelectedNodes()
 {
 	// Export the selected nodes and place the text on the clipboard
 	FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
-	FGraphPanelSelectionSet NewSelectedNodes;
 
 	FString ExportedText;
 
-	FEdGraphUtilities::ExportNodesToText(NewSelectedNodes, ExportedText);
+	FEdGraphUtilities::ExportNodesToText(SelectedNodes, ExportedText);
 	FPlatformApplicationMisc::ClipboardCopy(*ExportedText);
 	
 }
 
 void SDialogueGraphEditor::PasteNodes()
 {
+	const FScopedTransaction Transaction(INVTEXT("Paste Node"));
+	DialogueGraph->Modify();
+
+	UDialogueGraphNode* SelectedParent = nullptr;
+	bool bHasMultipleNodesSelected = false;
+
+	const FGraphPanelSelectionSet SelectedNodes = GetSelectedNodes();
+	for (FGraphPanelSelectionSet::TConstIterator SelectedIter(SelectedNodes); SelectedIter; ++SelectedIter)
+	{
+		UDialogueGraphNode* Node = Cast<UDialogueGraphNode>(*SelectedIter);
+
+		if (Node)
+		{
+			if (SelectedParent == nullptr)
+			{
+				SelectedParent = Node;
+			}
+			else
+			{
+				bHasMultipleNodesSelected = true;
+
+				break;
+			}
+		}
+	}
+
+	// Clear the selection set (newly pasted stuff will be selected)
+	ClearSelectionSet();
+
+	// Grab the text to paste from the clipboard.
+	FString TextToImport;
+	FPlatformApplicationMisc::ClipboardPaste(TextToImport);
+
+	// Import the nodes
+	TSet<UEdGraphNode*> PastedNodes;
+	FEdGraphUtilities::ImportNodesFromText(DialogueGraph, TextToImport, /*out*/ PastedNodes);
+
+	//Average position of nodes so we can move them while still maintaining relative distances to each other
+	FVector2D AvgNodePosition(0.0f, 0.0f);
+	
+	// Number of nodes used to calculate AvgNodePosition
+	int32 AvgCount = 0;
+	
+	for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
+	{
+		UEdGraphNode* EdNode = *It;
+		UDialogueGraphNode* DialogueGraphNode = Cast<UDialogueGraphNode>(EdNode);
+		if (EdNode && DialogueGraphNode)
+		{
+			AvgNodePosition.X += EdNode->NodePosX;
+			AvgNodePosition.Y += EdNode->NodePosY;
+			++AvgCount;
+		}
+	}
+	
+	if (AvgCount > 0)
+	{
+		float InvNumNodes = 1.0f / float(AvgCount);
+		AvgNodePosition.X *= InvNumNodes;
+		AvgNodePosition.Y *= InvNumNodes;
+	}
+
+	FVector2d location = GetPasteLocation();
+	
+	for (TSet<UEdGraphNode*>::TIterator It(PastedNodes); It; ++It)
+	{
+		UEdGraphNode* PasteNode = *It;
+		UDialogueGraphNode* PasteFlowGraphNode = Cast<UDialogueGraphNode>(PasteNode);
+
+		if (PasteFlowGraphNode)
+		{
+			// Select the newly pasted stuff
+			constexpr bool bSelectNodes = true;
+			SetNodeSelection(PasteNode, bSelectNodes);
+
+			PasteNode->NodePosX = (PasteNode->NodePosX - AvgNodePosition.X) + location.X;
+			PasteNode->NodePosY = (PasteNode->NodePosY - AvgNodePosition.Y) + location.Y;
+
+			PasteNode->SnapToGrid(16);
+
+			// Give new node a different Guid from the old one
+			PasteNode->CreateNewGuid();
+		}
+	}
+	
+	// Update UI
+	NotifyGraphChanged();
+
+	UObject* GraphOwner = DialogueGraph->GetOuter();
+	if (GraphOwner)
+	{
+		GraphOwner->PostEditChange();
+		GraphOwner->MarkPackageDirty();
+	}
+	
 }
