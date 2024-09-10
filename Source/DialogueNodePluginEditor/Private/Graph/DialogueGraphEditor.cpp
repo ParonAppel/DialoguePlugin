@@ -239,6 +239,7 @@ void SDialogueGraphEditor::PasteNodes()
 		}
 	}
 	
+	
 	if (AvgCount > 0)
 	{
 		float InvNumNodes = 1.0f / float(AvgCount);
@@ -265,6 +266,11 @@ void SDialogueGraphEditor::PasteNodes()
 			PasteNode->SnapToGrid(16);
 
 			// Give new node a different Guid from the old one
+
+			for (UEdGraphPin* Pin : PasteNode->Pins)
+			{
+				Pin->PinId = FGuid::NewGuid();
+			}
 			PasteNode->CreateNewGuid();
 		}
 	}

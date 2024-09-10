@@ -192,6 +192,8 @@ void FDialogueEditorToolkit::UpdateGraphFromDialogueAsset()
 			idToPinMap.Add(runtimePin->PinID, uiPin);
 		}
 
+		
+		
 		for(UDialogueRuntimePin* runtimePin : runtimeNode->OutputPins)
 		{
 			UEdGraphPin* uiPin = newUINode->CreateCustomPin(EGPD_Output, runtimePin->PinName);
@@ -202,8 +204,10 @@ void FDialogueEditorToolkit::UpdateGraphFromDialogueAsset()
 				connections.Add(std::make_pair(runtimePin->PinID, runtimePin->Connection->PinID));
 			}
 			idToPinMap.Add(runtimePin->PinID, uiPin);
-		}
 
+			
+		}
+		
 		DialogueGraph->AddNode(newUINode, true, true);
 	}
 
@@ -215,6 +219,14 @@ void FDialogueEditorToolkit::UpdateGraphFromDialogueAsset()
 
 		pin1->LinkedTo.Add(pin2);
 		pin2->LinkedTo.Add(pin1);
+
+		// Print String
+		// FString printString = FString(TEXT("Connections: "));
+		// printString.Append(pin1->PinId.ToString());
+		// printString.Append(TEXT(" , "));
+		// printString.Append(pin2->PinName.ToString());
+		//
+		// UE_LOG(LogTemp, Warning,TEXT("%s"), *printString);
 	}
 }
 

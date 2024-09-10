@@ -85,6 +85,4 @@ void UPlayerOptionsGraphNode::OnPropertiesChanged()
 
 	this->GetGraph()->NotifyNodeChanged(this);
 	this->GetGraph()->Modify();
-	// if(GraphNodeWidget)
-	// 	GraphNodeWidget->UpdateGraphNode();
 }
