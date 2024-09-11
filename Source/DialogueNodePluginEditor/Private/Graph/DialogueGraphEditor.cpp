@@ -86,6 +86,11 @@ bool SDialogueGraphEditor::CanPasteNodes()
 	return bIsPastePossible;
 }
 
+bool SDialogueGraphEditor::CanCutNodes()
+{
+	return CanDelete() && CanCopyNodes();
+}
+
 void SDialogueGraphEditor::BindGraphCommands()
 {
 
@@ -112,6 +117,10 @@ void SDialogueGraphEditor::BindGraphCommands()
 	CommandList->MapAction(GenericCommands.Paste,
 								   FExecuteAction::CreateRaw(this, &SDialogueGraphEditor::PasteNodes),
 								   FCanExecuteAction::CreateRaw(this, &SDialogueGraphEditor::CanPasteNodes));
+
+	CommandList->MapAction(GenericCommands.Cut,
+								   FExecuteAction::CreateRaw(this, &SDialogueGraphEditor::CutNodes),
+								   FCanExecuteAction::CreateRaw(this, &SDialogueGraphEditor::CanCopyNodes));
 	
 }
 
@@ -295,4 +304,10 @@ void SDialogueGraphEditor::PasteNodes()
 		GraphOwner->MarkPackageDirty();
 	}
 	
+}
+
+void SDialogueGraphEditor::CutNodes()
+{
+	CopySelectedNodes();
+	DeleteSelectedNodes();
 }

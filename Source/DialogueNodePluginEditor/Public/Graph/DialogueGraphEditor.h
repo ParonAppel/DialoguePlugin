@@ -24,6 +24,7 @@ public:
 	bool CanDelete();
 	bool CanCopyNodes();
 	bool CanPasteNodes();
+	bool CanCutNodes();
 
 	FOnSelectionChanged OnSelectionChangedEvent;
 
@@ -35,6 +36,7 @@ protected:
 	void DeleteSelectedNodes();
 	void CopySelectedNodes();
 	void PasteNodes();
+	void CutNodes();
 	
 	TSharedPtr<FUICommandList> CommandList = nullptr;
 	TSharedPtr<IDetailsView> DetailsView = nullptr;
