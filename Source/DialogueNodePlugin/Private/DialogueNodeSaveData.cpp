@@ -3,10 +3,6 @@
 
 #include "DialogueNodeSaveData.h"
 
-UDialogueNodeSaveData::UDialogueNodeSaveData()
-{
-}
-
 void UDialogueNodeSaveData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	OnPropertyChanged.Broadcast();

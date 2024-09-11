@@ -219,14 +219,7 @@ void FDialogueEditorToolkit::UpdateGraphFromDialogueAsset()
 
 		pin1->LinkedTo.Add(pin2);
 		pin2->LinkedTo.Add(pin1);
-
-		// Print String
-		// FString printString = FString(TEXT("Connections: "));
-		// printString.Append(pin1->PinId.ToString());
-		// printString.Append(TEXT(" , "));
-		// printString.Append(pin2->PinName.ToString());
-		//
-		// UE_LOG(LogTemp, Warning,TEXT("%s"), *printString);
+		
 	}
 }
 

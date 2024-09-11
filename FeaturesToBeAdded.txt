@@ -1,0 +1,23 @@
+
+|-- Added Features --|
+
+> Dialogue asset and graph
+> Simple dialogue nodes
+> Player options with visibility modifiers
+> Tag branch
+> Widget and actor component to display dialogue
+
+
+----------------------------------------------------------------------------------------------------------------
+
+|-- To Be Added Features --|
+
+> Pasting not working
+> Localization directly on simple node
+> Ctrl + x
+> Support for previewing rich text
+> Skill check nodes
+> Dice roll nodes
+> Support for events
+> Support for UDataAsset Cast
+> Looking into options + dialogue wigdet display

@@ -16,7 +16,6 @@ class DIALOGUENODEPLUGIN_API USimpleDialogueSaveData : public UDialogueNodeSaveD
 	GENERATED_BODY()
 
 public:
-	USimpleDialogueSaveData();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(RowType="CastMember"), Category="Cast")
 	TObjectPtr<UDataTable> CastDataTable;

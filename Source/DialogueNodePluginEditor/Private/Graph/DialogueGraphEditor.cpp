@@ -219,7 +219,7 @@ void SDialogueGraphEditor::PasteNodes()
 
 	// Import the nodes
 	TSet<UEdGraphNode*> PastedNodes;
-	FEdGraphUtilities::ImportNodesFromText(DialogueGraph, TextToImport, /*out*/ PastedNodes);
+	FEdGraphUtilities::ImportNodesFromText(DialogueGraph, TextToImport, PastedNodes);
 
 	//Average position of nodes so we can move them while still maintaining relative distances to each other
 	FVector2D AvgNodePosition(0.0f, 0.0f);
@@ -254,25 +254,35 @@ void SDialogueGraphEditor::PasteNodes()
 		UEdGraphNode* PasteNode = *It;
 		UDialogueGraphNode* PasteFlowGraphNode = Cast<UDialogueGraphNode>(PasteNode);
 
-		if (PasteFlowGraphNode)
+
+		if(!PasteFlowGraphNode)
 		{
-			// Select the newly pasted stuff
-			constexpr bool bSelectNodes = true;
-			SetNodeSelection(PasteNode, bSelectNodes);
-
-			PasteNode->NodePosX = (PasteNode->NodePosX - AvgNodePosition.X) + location.X;
-			PasteNode->NodePosY = (PasteNode->NodePosY - AvgNodePosition.Y) + location.Y;
-
-			PasteNode->SnapToGrid(16);
-
-			// Give new node a different Guid from the old one
-
-			for (UEdGraphPin* Pin : PasteNode->Pins)
-			{
-				Pin->PinId = FGuid::NewGuid();
-			}
-			PasteNode->CreateNewGuid();
+			continue;
 		}
+		
+		// copy node data
+		UDialogueNodeSaveData* newData = NewObject<UDialogueNodeSaveData>(PasteFlowGraphNode,
+			PasteFlowGraphNode->Data->GetClass(), NAME_None, RF_NoFlags, PasteFlowGraphNode->Data);
+
+		PasteFlowGraphNode->SetSaveData(newData);
+		
+		// Select the newly pasted stuff
+		bool bSelectNodes = true;
+		SetNodeSelection(PasteNode, bSelectNodes);
+
+		PasteNode->NodePosX = (PasteNode->NodePosX - AvgNodePosition.X) + location.X;
+		PasteNode->NodePosY = (PasteNode->NodePosY - AvgNodePosition.Y) + location.Y;
+
+		PasteNode->SnapToGrid(16);
+
+		// Give new GUIDs
+		for (UEdGraphPin* Pin : PasteNode->Pins)
+		{
+			Pin->PinId = FGuid::NewGuid();
+		}
+		
+		PasteNode->CreateNewGuid();
+		
 	}
 	
 	// Update UI

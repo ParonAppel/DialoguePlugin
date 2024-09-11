@@ -5,10 +5,6 @@
 #include "UObject/Object.h"
 
 
-USimpleDialogueSaveData::USimpleDialogueSaveData()
-{
-}
-
 void USimpleDialogueSaveData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	if(PropertyChangedEvent.Property->GetName() == "CastMemberRowName" && CastDataTable)

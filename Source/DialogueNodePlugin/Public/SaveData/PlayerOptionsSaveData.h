@@ -28,6 +28,7 @@ class DIALOGUENODEPLUGIN_API UPlayerOptionsSaveData : public UDialogueNodeSaveDa
 	GENERATED_BODY()
 
 public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FPlayerOptions> PlayerOptions;
 };
