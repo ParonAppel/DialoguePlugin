@@ -16,9 +16,11 @@ class DIALOGUENODEPLUGIN_API UDialogueNodeSaveData : public UObject
 	GENERATED_BODY()
 
 public:
-	
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+	
 	FOnPropertyChangedSignature OnPropertyChanged;
 	
 };

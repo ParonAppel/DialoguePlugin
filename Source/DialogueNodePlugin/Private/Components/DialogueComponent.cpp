@@ -32,11 +32,14 @@ void UDialogueComponent::OnNextDialogue(int Pin)
 	}
 
 	CurrentNode = CurrentNode->OutputPins[Pin]->Connection->Owner;
+
+	if(!CurrentNode->NodeSaveData)
+		return;
 	
 	if(CurrentNode->NodeSaveData->GetClass() == USimpleDialogueSaveData::StaticClass())
 	{
 		USimpleDialogueSaveData* saveData = Cast<USimpleDialogueSaveData>(CurrentNode->NodeSaveData);
-		DialogueWidget->OnNewDialogue(saveData->CastMember, saveData->DialogueText);
+		DialogueWidget->OnNewDialogue(saveData->CastMember, saveData->DialogueText, saveData->DialogueSound);
 	}
 	
 	else if(CurrentNode->NodeSaveData->GetClass() == UPlayerOptionsSaveData::StaticClass())
@@ -122,8 +125,10 @@ void UDialogueComponent::StartDialogue()
 
 void UDialogueComponent::QuitDialogue()
 {
+	DialogueWidget->OnDialogueOver();
 	DialogueWidget->OnNextDialogue.RemoveDynamic(this, &UDialogueComponent::OnNextDialogue);
 	DialogueWidget->RemoveFromParent();
 	DialogueWidget = nullptr;
+	OnDialougeTreeCompleted.Broadcast();
 }
 

@@ -6,18 +6,22 @@
 > Player options with visibility modifiers
 > Tag branch
 > Widget and actor component to display dialogue
+> Ctrl + x
+> Pasting not working
 
 
 ----------------------------------------------------------------------------------------------------------------
 
-|-- To Be Added Features --|
+|-- To Be Added Features for v1.0 --|
 
-> Pasting not working
+> Undo not restoring connections
+> Support for events (in progress)
+> Turn dialogue widget into an interface instead
 > Localization directly on simple node
-> Ctrl + x
 > Support for previewing rich text
 > Skill check nodes
 > Dice roll nodes
-> Support for events
 > Support for UDataAsset Cast
 > Looking into options + dialogue wigdet display
+> Voiceline support (in progress)
+> Write docs

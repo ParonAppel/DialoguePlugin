@@ -25,11 +25,16 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(EditCondition="CastDataTable == nullptr"), Category="Cast");
 	FCastMember CastMember;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(MultiLine=true), Category="Dialogue")
 	FText DialogueText;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(MultiLine=true), Category="Dialogue")
+	TObjectPtr<USoundWave> DialogueSound;
+
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 	
 private:
 

@@ -156,6 +156,7 @@ void SDialogueGraphEditor::OnSelectedNodesChanged(const TSet<UObject*>& Nodes)
 void SDialogueGraphEditor::UndoGraphAction()
 {
 	GEditor->UndoTransaction();
+	
 	DialogueGraph->Modify();
 	DialogueGraph->NotifyGraphChanged();
 }

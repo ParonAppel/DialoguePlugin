@@ -114,8 +114,15 @@ void FDialogueEditorToolkit::UpdateDialogueAssetFromGraph()
 		runtimeNode->NodeClass = uiNode->GetClass();
 		
 		if(UDialogueGraphNode* DialogueUINode = Cast<UDialogueGraphNode>(uiNode))
-			runtimeNode->NodeSaveData = DialogueUINode->Data;
-
+		{
+			if(DialogueUINode->Data)
+			{
+				TSubclassOf<UDialogueNodeSaveData> subClass = DialogueUINode->Data->GetClass();
+				UDialogueNodeSaveData* data = NewObject<UDialogueNodeSaveData>(runtimeNode, subClass, NAME_None, RF_NoFlags, DialogueUINode->Data);
+				runtimeNode->NodeSaveData = data;
+			}
+		}
+		
 		if(uiNode->GetClass() == UStartDialogueGraphNode::StaticClass())
 			Dialogue->Graph->StartNode = runtimeNode;
 

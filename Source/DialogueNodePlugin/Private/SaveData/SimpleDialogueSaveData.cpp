@@ -4,7 +4,7 @@
 #include "SaveData/SimpleDialogueSaveData.h"
 #include "UObject/Object.h"
 
-
+#if WITH_EDITOR
 void USimpleDialogueSaveData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	if(PropertyChangedEvent.Property->GetName() == "CastMemberRowName" && CastDataTable)
@@ -16,6 +16,7 @@ void USimpleDialogueSaveData::PostEditChangeProperty(FPropertyChangedEvent& Prop
 	
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
+#endif
 
 TArray<FString> USimpleDialogueSaveData::GetRowOptions()
 {

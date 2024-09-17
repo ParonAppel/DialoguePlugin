@@ -8,6 +8,7 @@
 #include "Widgets/DialogueWidgetBase.h"
 #include "DialogueComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDialougeTreeCompletedSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DIALOGUENODEPLUGIN_API UDialogueComponent : public UActorComponent
@@ -32,6 +33,9 @@ public:
 	UFUNCTION()
 	void OnNextDialogue(int Pin);
 
+	UPROPERTY(BlueprintAssignable)
+	FOnDialougeTreeCompletedSignature OnDialougeTreeCompleted;
+	
 protected:
 
 	UPROPERTY(BlueprintReadWrite)

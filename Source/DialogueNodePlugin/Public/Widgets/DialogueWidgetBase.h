@@ -22,11 +22,14 @@ class DIALOGUENODEPLUGIN_API UDialogueWidgetBase : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnNewDialogue(FCastMember Cast, const FText& DialogueText);
+	void OnNewDialogue(FCastMember Cast, const FText& DialogueText, USoundWave* SoundWave);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnNewOptions(const TMap<int ,FPlayerOptions>& Options);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDialogueOver();
+	
 	UFUNCTION(BlueprintCallable)
 	void CallOnNextDialogue();
 
@@ -35,7 +38,6 @@ public:
 	
 	UPROPERTY()
 	FOnNextDialogueSignature OnNextDialogue;
-
 
 
 protected:
