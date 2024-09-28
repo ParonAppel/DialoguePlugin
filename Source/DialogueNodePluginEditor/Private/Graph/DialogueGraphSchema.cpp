@@ -5,6 +5,7 @@
 
 #include "FlowNodes/DialogueFlowTagBranchNode.h"
 #include "Nodes/DialogueGraphNode.h"
+#include "Nodes/EventGraphNode.h"
 #include "Nodes/PlayerOptionsGraphNode.h"
 #include "Nodes/SimpleDialogueGraphNode.h"
 #include "Nodes/StartDialogueGraphNode.h"
@@ -16,7 +17,7 @@ void UDialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 
 	TSharedPtr<FNewSimpleDialogueNodeAction> NewSimpleDialogueNodeAction (
 		new FNewSimpleDialogueNodeAction(
-			INVTEXT("Nodes"),
+			INVTEXT("Dialogue"),
 			INVTEXT("New Simple Dialogue"),
 			INVTEXT("Makes A New Simple Dialogue Node"),
 			0
@@ -27,8 +28,8 @@ void UDialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 
 	TSharedPtr<FNewPlayerOptionsNodeAction> NewPlayerOptionsNodeAction (
 		new FNewPlayerOptionsNodeAction(
-			INVTEXT("Nodes"),
-			INVTEXT("New Player Option"),
+			INVTEXT("Dialogue"),
+			INVTEXT("New Player Dialogue Option"),
 			INVTEXT("Makes A New Player Option Node"),
 			0
 			)
@@ -46,6 +47,17 @@ void UDialogueGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Cont
 		);
 
 	ContextMenuBuilder.AddAction(NewTagBranchNodeAction);
+
+	TSharedPtr<FNewEventNodeAction> NewEventNodeAction (
+		new FNewEventNodeAction(
+			INVTEXT("Event"),
+			INVTEXT("New Event Node"),
+			INVTEXT("A Node That Will Trigger An Event"),
+			0
+			)
+		);
+
+	ContextMenuBuilder.AddAction(NewEventNodeAction);
 }
 
 const FPinConnectionResponse UDialogueGraphSchema::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const
@@ -153,6 +165,29 @@ UEdGraphNode* FNewTagBranchNodeAction::PerformAction(UEdGraph* ParentGraph, UEdG
 	result->CreateCustomPin(EGPD_Output, TEXT("Success"));
 	result->CreateCustomPin(EGPD_Output, TEXT("Fail"));
 
+	if(FromPin)
+	{
+		result->GetSchema()->TryCreateConnection(FromPin, inputPin);
+	}
+	
+	ParentGraph->Modify();
+	ParentGraph->AddNode(result, true, true);
+	return result;
+}
+
+UEdGraphNode* FNewEventNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location,
+	bool bSelectNewNode)
+{
+	UEventGraphNode* result = NewObject<UEventGraphNode>(ParentGraph);
+	result->CreateNewGuid();
+	result->NodePosX = Location.X;
+	result->NodePosY = Location.Y;
+	
+	result->SetSaveData(nullptr);
+	
+	UEdGraphPin* inputPin = result->CreateCustomPin(EGPD_Input, TEXT(""));
+	result->CreateCustomPin(EGPD_Output, TEXT(""));
+	
 	if(FromPin)
 	{
 		result->GetSchema()->TryCreateConnection(FromPin, inputPin);

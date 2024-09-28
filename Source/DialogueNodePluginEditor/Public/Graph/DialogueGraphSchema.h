@@ -69,3 +69,17 @@ public:
 
 	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;
 };
+
+USTRUCT()
+struct FNewEventNodeAction : public FEdGraphSchemaAction
+{
+	GENERATED_BODY()
+
+public:
+
+	FNewEventNodeAction() {}
+	FNewEventNodeAction(FText InNodeCategory, FText InMenuDesc, FText InToolTip, const int32 InGrouping)
+		: FEdGraphSchemaAction(InNodeCategory, InMenuDesc, InToolTip, InGrouping) {}
+
+	virtual UEdGraphNode* PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode) override;
+};

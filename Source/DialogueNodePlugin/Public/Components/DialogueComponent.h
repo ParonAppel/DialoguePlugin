@@ -48,5 +48,6 @@ private:
 
 	void HandlePlayerOptions();
 	void HandleTagBranch();
+	void HandleEventNode();
 	
 };

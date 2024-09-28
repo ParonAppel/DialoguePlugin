@@ -6,6 +6,7 @@
 #include "Components/GameplayTagComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "SaveData/EventNodeSaveData.h"
 #include "SaveData/PlayerOptionsSaveData.h"
 #include "SaveData/SimpleDialogueSaveData.h"
 #include "SaveData/TagBranchSaveData.h"
@@ -50,6 +51,11 @@ void UDialogueComponent::OnNextDialogue(int Pin)
 	else if(CurrentNode->NodeSaveData->GetClass() == UTagBranchSaveData::StaticClass())
 	{
 		HandleTagBranch();
+	}
+
+	else if(CurrentNode->NodeSaveData->GetClass() == UEventNodeSaveData::StaticClass())
+	{
+		HandleEventNode();
 	}
 }
 
@@ -97,6 +103,16 @@ void UDialogueComponent::HandleTagBranch()
 	}
 
 	//Success
+	OnNextDialogue(0);
+}
+
+void UDialogueComponent::HandleEventNode()
+{
+	UEventNodeSaveData* saveData = Cast<UEventNodeSaveData>(CurrentNode->NodeSaveData);
+	if(!Dialogue->CallOnDelegateByName(saveData->EventName))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Not bound"));
+	}
 	OnNextDialogue(0);
 }
 

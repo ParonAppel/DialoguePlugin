@@ -27,7 +27,8 @@ public class DialogueNodePlugin : ModuleRules
 			{
 				"Core",
 				"UMG",
-				"GameplayTags"
+				"GameplayTags",
+				"BlueprintGraph"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
