@@ -56,9 +56,6 @@ public:
 	bool BindToDelegateByName(FName DelegateName , FTest const& event);
 
 	UFUNCTION(BlueprintCallable)
-	bool BindToDialogueEvent(UPARAM(meta=(GetOptions="GetOptions"))FName DelegateName , FTest const& event);
-
-	UFUNCTION(BlueprintCallable)
 	bool BindToDelegateByIndex(int Index , FTest const& event);
 
 	UFUNCTION()
@@ -67,12 +64,11 @@ public:
 	UPROPERTY()
 	UDialogueRuntimeGraph* Graph = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FDialogueDelegate> Delegates;
 protected:
 
 	UFUNCTION()
 	TArray<FName> GetOptions();
 	
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FDialogueDelegate> Delegates;
 };

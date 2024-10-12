@@ -2,6 +2,9 @@
 
 
 #include "Nodes/EventGraphNode.h"
+
+#include "SGraphPinNameList.h"
+#include "SNameComboBox.h"
 #include "SaveData/EventNodeSaveData.h"
 #include "Graph/DialogueGraph.h"
 #include "Widgets/Input/SMultiLineEditableTextBox.h"
@@ -39,8 +42,6 @@ void UEventGraphNode::SetSaveData(UDialogueNodeSaveData* InData)
 	Data->OnPropertyChanged.AddUObject(this, &UEventGraphNode::OnPropertiesChanged);
 }
 
-
-
 TSharedPtr<SGraphNode> UEventGraphNode::CreateVisualWidget()
 {
 	return SAssignNew(GraphNodeWidget, SEventGraphNode, this);
@@ -62,8 +63,31 @@ void SEventGraphNode::Construct(const FArguments& InArgs, UEventGraphNode* InNod
 	SimpleDialogueGraphNode = InNode;
 	
 	SetCursor(EMouseCursor::CardinalCross);
-	UpdateGraphNode();
+
+	NameList.Empty();
+	UDialogueGraph* ParentGraph =  Cast<UDialogueGraph>(InNode->GetGraph());
+	for(FDialogueDelegate& delegate : ParentGraph->DialogueAsset->Delegates)
+	{
+		NameList.Add(MakeShared<FName>(delegate.DelegateName));
+	}
+
+	UEventNodeSaveData* data = Cast<UEventNodeSaveData>(SimpleDialogueGraphNode->Data);
 	
+	if (SimpleDialogueGraphNode)
+	{
+		// Preserve previous selection, or set to first in list
+		FName PreviousSelection = FName(data->EventName);
+		for (TSharedPtr<FName> ListNamePtr : NameList)
+		{
+			if (PreviousSelection == *ListNamePtr.Get())
+			{
+				CurrentlySelectedName = ListNamePtr;
+				break;
+			}
+		}
+	}
+
+	UpdateGraphNode();
 }
 
 TSharedRef<SWidget> SEventGraphNode::CreateNodeContentArea()
@@ -88,12 +112,11 @@ TSharedRef<SWidget> SEventGraphNode::CreateNodeContentArea()
 				SNew(SBox)
 				.MaxDesiredWidth(300)
 				[
-					SAssignNew(DialogueTextBlock, SMultiLineEditableTextBox)
-					.IsReadOnly(false)
-					.OnTextCommitted(this, &SEventGraphNode::OnTextCommitted)
-					.WrapTextAt(300)
-					.AutoWrapText(true)
-					.WrappingPolicy(ETextWrappingPolicy::DefaultWrapping)
+					SAssignNew(NameComboBox, SNameComboBox)
+						.ContentPadding(FMargin(6.0f, 2.0f))
+						.OptionsSource(&NameList)
+						.InitiallySelectedItem(CurrentlySelectedName)
+						.OnSelectionChanged(this, &SEventGraphNode::OnSelectionChanged)
 				]
 			]
 			+SHorizontalBox::Slot()
@@ -108,9 +131,22 @@ TSharedRef<SWidget> SEventGraphNode::CreateNodeContentArea()
 void SEventGraphNode::UpdateGraphNode()
 {
 	SGraphNode::UpdateGraphNode();
+
+	if(NameComboBox)
+	{
+		NameComboBox->SetSelectedItem(CurrentlySelectedName);
+		NameComboBox->RefreshOptions();
+	}
 }
 
-void SEventGraphNode::OnTextCommitted(const FText& NewText, ETextCommit::Type CommitType)
+
+void SEventGraphNode::OnSelectionChanged(TSharedPtr<FName> NameItem, ESelectInfo::Type SelectInfo)
 {
+	if(!NameComboBox)
+		return;
+	
+	UEventNodeSaveData* data = Cast<UEventNodeSaveData>(SimpleDialogueGraphNode->Data);
+	data->EventName = *NameComboBox->GetSelectedItem();
 }
+
 

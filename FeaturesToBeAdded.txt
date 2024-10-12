@@ -8,14 +8,14 @@
 > Widget and actor component to display dialogue
 > Ctrl + x
 > Pasting not working
-
+> Support for events (basics done)
 
 ----------------------------------------------------------------------------------------------------------------
 
 |-- To Be Added Features for v1.0 --|
 
+> compile/refresh assets button
 > Undo not restoring connections
-> Support for events (in progress)
 > Turn dialogue widget into an interface instead
 > Localization directly on simple node
 > Support for previewing rich text

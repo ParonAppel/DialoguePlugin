@@ -10,7 +10,7 @@
 /**
  * 
  */
-class SMultiLineEditableTextBox;
+class SNameComboBox;
 
 UCLASS()
 class DIALOGUENODEPLUGINEDITOR_API UEventGraphNode : public UDialogueGraphNode
@@ -50,10 +50,12 @@ public:
 
 	virtual void UpdateGraphNode() override;
 
-	void OnTextCommitted( const FText& NewText, ETextCommit::Type CommitType);
+	void OnSelectionChanged( TSharedPtr<FName> NameItem, ESelectInfo::Type SelectInfo);
 
 protected:
+
+	TArray<TSharedPtr<FName>> NameList;
+	TSharedPtr<FName> CurrentlySelectedName;
 	UEventGraphNode* SimpleDialogueGraphNode = nullptr;
-	
-	TSharedPtr<SMultiLineEditableTextBox> DialogueTextBlock = nullptr;
+	TSharedPtr<SNameComboBox> NameComboBox = nullptr;
 };
